@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+server/dist/
+client/dist/
+
+# Database (Local Storage)
+server/src/db/
+*.json
+!package.json
+!tsconfig*.json
+!shared/package.json
+!server/package.json
+!client/package.json
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite
+client/stats.html
