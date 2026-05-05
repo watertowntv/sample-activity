@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { useConfigKey } from "../internal/hooks/useConfig.ts";
-import { SceneType } from "@activity/shared";
+import { SceneType } from "../config";
 
 
 const DEFAULT_SCENE = SceneType.Count;

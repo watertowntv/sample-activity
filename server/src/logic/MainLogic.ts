@@ -1,8 +1,9 @@
-import { MessageType, type GlobalSocketMessage, type HistoryRecord, type GlobalServerConfig } from '@activity/shared';
+import { MessageType, type GlobalSocketMessage } from '@activity/shared';
+import { type HistoryRecord, type GlobalServerConfig } from '../config';
 import type { WebSocketServer } from 'ws';
 import type { ActivityWebSocket } from '../internal/types';
-import { useServerConfig } from '../internal/core/config.js';
-import { INITIAL_GLOBAL_CONFIG } from '../config.js';
+import { useServerConfig } from '../internal/core/config';
+import { INITIAL_GLOBAL_CONFIG } from '../config';
 
 
 /**

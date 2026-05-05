@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { ServerIO, APP_CONSTANTS } from '@activity/shared';
+import { APP_CONSTANTS } from '@activity/shared';
+import { type ServerIO } from '../types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_ROOT = path.join(__dirname, '../../db');

@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { type ClientConfig } from '@activity/shared';
-import { INITIAL_CONFIG } from '../../config.ts';
+import { type ClientConfig, INITIAL_CONFIG } from '../../config';
 
 const STORAGE_KEY = 'app_config';
 

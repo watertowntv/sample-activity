@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@activity/shared": "workspace:*",
     "@discord/embedded-app-sdk": "^2.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "zustand": "^5.0.0",
-    "@activity/shared": "workspace:*"
+    "zod": "^3.25.76",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

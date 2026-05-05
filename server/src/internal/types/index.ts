@@ -14,3 +14,7 @@ export interface ActivityWebSocket extends WebSocket {
 
     sendJSON(data: GlobalSocketMessage): void;
 }
+
+export interface ServerIO {
+    $save(): void;
+}
