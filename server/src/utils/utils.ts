@@ -1,5 +1,5 @@
 import { WebSocketServer } from 'ws';
-import { ActivityWebSocket } from "../internal/types/index.js";
+import { ActivityWebSocket } from "../internal/types";
 
 
 export const participants = (
@@ -9,6 +9,7 @@ export const participants = (
     return client.readyState === 1 && client.instanceId === instanceId;
 });
 
+// noinspection JSUnusedGlobalSymbols
 export const broadcastIO = (
     io: WebSocketServer,
     instanceId: string,

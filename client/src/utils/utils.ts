@@ -5,12 +5,14 @@ export const getAvatarUrl = (user: DiscordUser | null, size: number = 128) => {
     if (!user || !user.id) return `https://cdn.discordapp.com/embed/avatars/0.png`;
 
     if (!user.avatar) {
-        let defaultAvatarIndex = 0;
+        let defaultAvatarIndex;
+
         try {
             defaultAvatarIndex = Number(BigInt(user.id) >> 22n) % 6;
-        } catch (e) {
+        } catch {
             defaultAvatarIndex = 0;
         }
+
         return `https://cdn.discordapp.com/embed/avatars/${defaultAvatarIndex}.png`;
     }
 
