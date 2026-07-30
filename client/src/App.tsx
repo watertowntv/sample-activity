@@ -11,6 +11,10 @@ export default function App() {
     const { status, isAuthorized, isConnected, error } = useDiscord();
     const { isLoaded, progress, isError } = useAssetLoader(ASSETS_TO_LOAD);
 
+    if (import.meta.env.PROD && status === 'Browser') {
+        return <div className="min-h-screen bg-white" />;
+    }
+
     if (status === 'Error' || error || isError) return <ErrorScene />;
 
     const isReady = isAuthorized && isLoaded;
