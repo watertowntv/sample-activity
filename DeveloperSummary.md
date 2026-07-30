@@ -262,3 +262,46 @@ When adding a new feature or game mechanic (e.g., multiplayer card game, quiz, t
 4. **Local Multi-Tab Debugging**:
    - Test multiplayer logic locally by opening multiple browser tabs to `http://localhost:3030`.
    - Server recognizes `code === 'browser'` and creates isolated mock user sessions (`Browser`), allowing real-time multi-user testing with zero Discord API rate limit risk.
+
+---
+
+## 4. Static Asset Management & Preloading Architecture
+
+### 4.1 Directory Conventions (`client/public/`)
+- **Default Directory**: `client/public/` is Vite's zero-config static asset root directory. Do not alter `publicDir` configuration unless strictly required.
+- **Role Separation**:
+  - `client/public/`: Raw media binaries (images, audio files).
+  - `client/src/assets/`: TypeScript mapping constants, types, and loader registration (`sounds.ts`, `images.ts`, `index.ts`).
+
+### 4.2 Subfolder Hierarchy & Nested Assets
+Assets inside `client/public/` can be organized into subfolders (e.g., `client/public/sounds/sfx/`, `client/public/images/ui/`).
+- **Relative & Absolute Path Resolution**: Reference nested files using absolute paths originating from root `/`:
+  ```typescript
+  // client/src/assets/sounds.ts
+  export const SOUNDS = {
+      PING: '/sounds/sfx/ping.mp3',
+      BGM: '/sounds/bgm/main_theme.mp3'
+  } as const;
+
+  // client/src/assets/images.ts
+  export const IMAGES = {
+      FAVICON: '/favicon.png',
+      CARD_BG: '/images/ui/card_bg.png'
+  } as const;
+  ```
+
+### 4.3 Preloading Pipeline
+- All assets listed in `SOUNDS` and `IMAGES` are aggregated into `ASSETS_TO_LOAD` in [client/src/assets/index.ts](file:///d:/js/discord%20activity/sample-activity/client/src/assets/index.ts).
+- [client/src/App.tsx](file:///d:/js/discord%20activity/sample-activity/client/src/App.tsx) passes `ASSETS_TO_LOAD` to `useAssetLoader()`. Adding paths to `SOUNDS` or `IMAGES` automatically registers them for preloading during the splash screen loader (`LoadingScene.tsx`).
+
+### 4.4 Filename Collision Handling Across Subfolders
+If identical filenames exist in different subfolders (e.g., `public/folderA/ping.mp3` vs `public/folderB/ping.mp3`):
+- **URL Disambiguation**: The browser network engine and `useAssetLoader` evaluate full URL paths (`/folderA/ping.mp3` vs `/folderB/ping.mp3`). No collision occurs at network level.
+- **Audio Pool Isolation**: `useSound.ts` matches pool instances against full `absoluteUrl` (`new URL(url, window.location.href).href`). Cached instances between different subfolders remain isolated.
+- **TypeScript Key Unique Naming**: TypeScript objects require unique keys. Differentiate constant keys when referencing identical filenames across different directories:
+  ```typescript
+  export const SOUNDS = {
+      PING_A: '/folderA/ping.mp3',
+      PING_B: '/folderB/ping.mp3'
+  } as const;
+  ```
