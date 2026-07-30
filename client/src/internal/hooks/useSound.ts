@@ -7,7 +7,7 @@ const pool: HTMLAudioElement[] = [];
 
 export const useSound = (key: SoundType) => {
     const url = SOUNDS[key];
-    const masterVolume = useConfig(s => s.volume.master);
+    const masterVolume = useConfig(config => config.volume.master);
 
     useEffect(() => {
         const safeVol = Math.max(0, Math.min(1, masterVolume ?? 1));

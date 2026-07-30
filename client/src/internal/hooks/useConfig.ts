@@ -49,5 +49,5 @@ useConfig.subscribe((state) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 });
 
-export const useConfigKey = <K extends keyof ClientConfig>(key: K) => useConfig(s => s[key]);
+export const useConfigKey = <K extends keyof ClientConfig>(key: K) => useConfig(config => config[key]);
 export const updateConfig = (config: Partial<ClientConfig>) => useConfig.getState().patch(config);

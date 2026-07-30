@@ -8,8 +8,10 @@ export const ClientConfigSchema = z.object({
     scene: SceneTypeSchema.default(SceneType.Count),
     count: z.number().default(0),
     volume: z.object({
-        master: z.number().default(1)
-    }).default({ master: 1 })
+        master: z.number()
+    }).default({
+        master: 1
+    })
 });
 
 export type ClientConfig = z.infer<typeof ClientConfigSchema>;
