@@ -15,14 +15,10 @@ export const MessageType = {
 
 export type MessageType = keyof typeof MessageType;
 
-type DiscriminatedUnionOptions = Parameters<typeof z.discriminatedUnion>[1];
-
-const schemas = [
+export const GlobalSocketMessageSchema = z.discriminatedUnion("type", [
     ...InfrastructureMessagesSchema,
     ...ClientMessagesSchema,
     ...ServerMessagesSchema,
-] as unknown as DiscriminatedUnionOptions;
-
-export const GlobalSocketMessageSchema = z.discriminatedUnion("type", schemas);
+]);
 
 export type GlobalSocketMessage = z.infer<typeof GlobalSocketMessageSchema>;

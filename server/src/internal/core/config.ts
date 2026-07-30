@@ -31,8 +31,12 @@ export type ConfigType = 'instance' | 'user' | 'static';
 const IS_PROXY = Symbol('is_proxy');
 const RAW = Symbol('raw');
 
+interface ProxyWithRaw {
+    [RAW]?: unknown;
+}
+
 export function useServerConfig<T extends object>(type: ConfigType, id: string, initialConfig: T, autoSave: boolean = false): T & ServerIO {
-    const safeId = id.replace(/[^a-zA-Z0-9_-]/g, '');
+    const safeId = id.replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
     const key = `${type}:${safeId}`;
     if (instances.has(key)) return instances.get(key) as T & ServerIO;
 
@@ -138,7 +142,7 @@ export function useServerConfig<T extends object>(type: ConfigType, id: string, 
                 return (typeof p === 'string' && value !== null && typeof value === 'object') ? wrap(value) : value;
             },
             set: (t, p, v) => {
-                const rawValue = (v && (v as any)[RAW]) ? (v as any)[RAW] : v;
+                const rawValue = (v && (v as ProxyWithRaw)[RAW]) ? (v as ProxyWithRaw)[RAW] : v;
                 const valueToSet = (rawValue !== null && typeof rawValue === 'object') 
                     ? structuredClone(rawValue) 
                     : rawValue;
@@ -198,7 +202,7 @@ export async function flushAllConfigs(): Promise<void> {
 }
 
 export function unloadServerConfig(type: ConfigType, id: string): void {
-    const safeId = id.replace(/[^a-zA-Z0-9_-]/g, '');
+    const safeId = id.replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
     const key = `${type}:${safeId}`;
 
     if (saveTimeouts.has(key) || activeWrites.has(key) || pendingSaves.has(key)) {

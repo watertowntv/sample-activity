@@ -3,42 +3,48 @@ import { type ClientConfig, INITIAL_CONFIG } from '../../config';
 
 const STORAGE_KEY = 'app_config';
 
-const merge = (t: Record<string, unknown>, s: Record<string, unknown>) => {
-    for (const k in s) {
-        const sv = s[k];
+const merge = <T extends object>(targetObject: T, sourceObject: Record<string, unknown>): T => {
+    const targetRecord = targetObject as Record<string, unknown>;
 
-        if (sv !== null && typeof sv === 'object' && !Array.isArray(sv)) {
-            let tv = t[k];
-            if (!tv || typeof tv !== 'object') tv = t[k] = {};
+    for (const key in sourceObject) {
+        const sourceValue = sourceObject[key];
 
-            merge(tv as Record<string, unknown>, sv as Record<string, unknown>);
-        } else t[k] = sv;
+        if (sourceValue !== null && typeof sourceValue === 'object' && !Array.isArray(sourceValue)) {
+            let targetValue = targetRecord[key];
+            if (!targetValue || typeof targetValue !== 'object') {
+                targetValue = targetRecord[key] = {};
+            }
+
+            merge(targetValue as Record<string, unknown>, sourceValue as Record<string, unknown>);
+        } else {
+            targetRecord[key] = sourceValue;
+        }
     }
 
-    return t;
+    return targetObject;
 };
 
 const getInitial = (): ClientConfig => {
-    const base = structuredClone(INITIAL_CONFIG);
+    const initialBase = structuredClone(INITIAL_CONFIG);
 
     try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (!stored) return base;
+        const storedConfig = localStorage.getItem(STORAGE_KEY);
+        if (!storedConfig) return initialBase;
 
-        return merge(base, JSON.parse(stored)) as ClientConfig;
+        return merge(initialBase, JSON.parse(storedConfig) as Record<string, unknown>);
     } catch {
-        return base;
+        return initialBase;
     }
 };
 
-export const useConfig = create<ClientConfig & { patch: (config: Partial<ClientConfig>) => void }>((set) => ({
+export const useConfig = create<ClientConfig & { patch: (partialConfig: Partial<ClientConfig>) => void }>((set) => ({
     ...getInitial(),
-    patch: (config) => set((state) => {
-        const { patch, ...data } = state;
-        const next = structuredClone(data) as ClientConfig;
-        const merged = merge(next as Record<string, unknown>, config as Record<string, unknown>) as ClientConfig;
-        
-        return { ...merged, patch };
+    patch: (partialConfig) => set((currentState) => {
+        const { patch, ...data } = currentState;
+        const nextConfiguration = structuredClone(data);
+        const mergedConfiguration = merge(nextConfiguration, partialConfig as Record<string, unknown>);
+
+        return { ...mergedConfiguration, patch };
     })
 }));
 
