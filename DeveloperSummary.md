@@ -49,7 +49,6 @@ When adding a new feature or game mechanic (e.g., multiplayer card game, quiz, t
    - Append schema to `ClientMessagesSchema` array.
    ```typescript
    export const ClientMessageType = {
-       CLIENT_CONNECTION: 'CLIENT_CONNECTION',
        CLIENT_MESSAGE: 'CLIENT_MESSAGE',
        PLAY_CARD: 'PLAY_CARD'
    } as const;
@@ -148,8 +147,8 @@ When adding a new feature or game mechanic (e.g., multiplayer card game, quiz, t
    }
    ```
 
-2. **Client Config Schema ([client/src/config/index.ts](file:///d:/js/discord%20activity/sample-activity/client/src/config/index.ts))**:
-   - Extend `ClientConfigSchema` with new properties and scene enum values.
+2. **Client Config Interface ([client/src/config/index.ts](file:///d:/js/discord%20activity/sample-activity/client/src/config/index.ts))**:
+   - Extend `ClientConfig` interface and `INITIAL_CONFIG` with new properties and scene enum values.
 
 3. **React Scene Implementation ([client/src/scenes/](file:///d:/js/discord%20activity/sample-activity/client/src/scenes/))**:
    - Build React scene components. Consume hooks and utilities.

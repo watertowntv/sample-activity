@@ -12,4 +12,4 @@ export const ServerMessagesSchema = [
             count: z.number()
         })
     }),
-];
+] as const;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { InfrastructureMessagesSchema, InfraMessageType, AuthPayloadSchema, InitPayloadSchema } from "./infrastructure.ts";
+import { InfrastructureMessagesSchema, InfraMessageType } from "./infrastructure.ts";
 import { ClientMessageType, ClientMessagesSchema } from "./client";
 import { ServerMessageType, ServerMessagesSchema } from "./server";
 
@@ -15,13 +15,14 @@ export const MessageType = {
 
 export type MessageType = keyof typeof MessageType;
 
-export const GlobalSocketMessageSchema = z.discriminatedUnion("type", [
-    z.object({ type: z.literal(InfraMessageType.AUTH), payload: AuthPayloadSchema }),
-    z.object({ type: z.literal(InfraMessageType.INIT), payload: InitPayloadSchema }),
-    z.object({ type: z.literal(InfraMessageType.ERROR), payload: z.object({ message: z.string() }) }),
-    z.object({ type: z.literal(ClientMessageType.CLIENT_CONNECTION), payload: z.object({}) }),
-    z.object({ type: z.literal(ClientMessageType.CLIENT_MESSAGE), payload: z.object({ name: z.string() }) }),
-    z.object({ type: z.literal(ServerMessageType.SERVER_MESSAGE), payload: z.object({ count: z.number() }) }),
-]);
+type DiscriminatedUnionOptions = Parameters<typeof z.discriminatedUnion>[1];
+
+const schemas = [
+    ...InfrastructureMessagesSchema,
+    ...ClientMessagesSchema,
+    ...ServerMessagesSchema,
+] as unknown as DiscriminatedUnionOptions;
+
+export const GlobalSocketMessageSchema = z.discriminatedUnion("type", schemas);
 
 export type GlobalSocketMessage = z.infer<typeof GlobalSocketMessageSchema>;

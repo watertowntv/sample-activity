@@ -23,8 +23,8 @@ pnpm monorepo specified in `pnpm-workspace.yaml` (`client`, `server`, `shared`).
 │   │   └── index.ts (Unified shared export entrypoint)
 │   └── message/
 │       ├── index.ts (GlobalSocketMessageSchema union definition)
-│       ├── infrastructure.ts (AUTH, INIT, ERROR schemas)
-│       ├── client/index.ts (CLIENT_CONNECTION, CLIENT_MESSAGE)
+│       ├── infrastructure.ts (AUTH, INIT, ERROR, CLIENT_CONNECTION schemas)
+│       ├── client/index.ts (CLIENT_MESSAGE)
 │       └── server/index.ts (SERVER_MESSAGE)
 ├── server/ (@sample-activity/server)
 │   ├── package.json (Express v5, WS v8, Zod v4, TSX)
