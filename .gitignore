@@ -4,13 +4,17 @@ node_modules/
 
 # Build outputs
 dist/
+**/dist/
 build/
 server/dist/
 client/dist/
+shared/dist/
+*.d.ts
 
 # Database (Local Storage)
 server/src/db/
 server/src/db/*.json
+*.tmp
 
 # Secrets
 .env

@@ -6,7 +6,7 @@ export const useAssetLoader = (assetUrls: string[]) => {
     const [isLoaded, setIsLoaded] = useState(assetUrls.length === 0);
     const [isError, setIsError] = useState(false);
 
-    if (assetUrls !== prevUrls) {
+    if (assetUrls.join(',') !== prevUrls.join(',')) {
         setPrevUrls(assetUrls);
         setProgress(assetUrls.length === 0 ? 100 : 0);
         setIsLoaded(assetUrls.length === 0);
@@ -20,9 +20,13 @@ export const useAssetLoader = (assetUrls: string[]) => {
         let active = true;
         let loadedCount = 0;
 
-        const handleLoad = (success: boolean) => {
+        const handleLoad = (success: boolean, url?: string) => {
             if (!active) return;
-            if (!success) setIsError(true);
+            if (!success) {
+                setIsError(true);
+
+                console.error("AssetLoader:", url)
+            }
             
             loadedCount++;
             const currentProgress = Math.round((loadedCount / total) * 100);
@@ -37,13 +41,16 @@ export const useAssetLoader = (assetUrls: string[]) => {
             
             if (isAudio) {
                 const audio = el as HTMLAudioElement;
-                audio.oncanplay = () => handleLoad(true);
-                audio.onerror = () => handleLoad(false);
+
+                audio.oncanplay = () => handleLoad(true, url);
+                audio.onerror = () => handleLoad(false, url);
+
                 audio.load();
             } else {
                 const img = el as HTMLImageElement;
-                img.onload = () => handleLoad(true);
-                img.onerror = () => handleLoad(false);
+
+                img.onload = () => handleLoad(true, url);
+                img.onerror = () => handleLoad(false, url);
             }
             
             el.src = url;

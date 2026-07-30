@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { APP_CONSTANTS } from '@activity/shared';
 import { SOUNDS, type SoundType } from '../../assets';
 import { useConfig } from './useConfig.ts';
@@ -9,8 +9,14 @@ export const useSound = (key: SoundType) => {
     const url = SOUNDS[key];
     const masterVolume = useConfig(s => s.volume.master);
 
+    useEffect(() => {
+        const safeVol = Math.max(0, Math.min(1, masterVolume ?? 1));
+        pool.forEach(audio => { audio.volume = safeVol; });
+    }, [masterVolume]);
+
     const play = useCallback(() => {
         const absoluteUrl = new URL(url, window.location.href).href;
+        const safeVol = Math.max(0, Math.min(1, masterVolume ?? 1));
         let audio = pool.find(a => a.paused && a.src === absoluteUrl);
         
         if (!audio) {
@@ -24,13 +30,15 @@ export const useSound = (key: SoundType) => {
 
         if (!audio) return;
         
-        audio.volume = masterVolume;
         audio.currentTime = 0;
         if (audio.src === absoluteUrl && audio.readyState >= 3) {
+            audio.volume = safeVol;
             audio.play().catch(() => {});
         } else {
             audio.src = absoluteUrl;
+            audio.volume = safeVol;
             audio.oncanplaythrough = () => {
+                audio.volume = safeVol;
                 audio.play().catch(() => {});
                 audio.oncanplaythrough = null;
             };

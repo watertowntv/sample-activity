@@ -6,7 +6,7 @@ export const DiscordUserSchema = z.object({
     username: z.string(),
     global_name: z.string().nullable(),
     avatar: z.string().nullable(),
-    discriminator: z.string()
+    discriminator: z.string().nullable().optional()
 });
 
 export type DiscordUser = z.infer<typeof DiscordUserSchema>;

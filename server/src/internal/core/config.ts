@@ -58,12 +58,12 @@ export function useServerConfig<T extends object>(type: ConfigType, id: string, 
                 return target;
             };
 
-            data = merge(JSON.parse(JSON.stringify(initialConfig)), loaded) as T;
+            data = merge(structuredClone(initialConfig) as Record<string, unknown>, loaded as Record<string, unknown>) as T;
         } catch (e) {
             console.error(`[Config] Parse Error (${key}):`, e);
-            data = JSON.parse(JSON.stringify(initialConfig));
+            data = structuredClone(initialConfig);
         }
-    } else data = JSON.parse(JSON.stringify(initialConfig));
+    } else data = structuredClone(initialConfig);
 
     const io: ServerIO = {
         $save: () => {
@@ -140,7 +140,7 @@ export function useServerConfig<T extends object>(type: ConfigType, id: string, 
             set: (t, p, v) => {
                 const rawValue = (v && (v as any)[RAW]) ? (v as any)[RAW] : v;
                 const valueToSet = (rawValue !== null && typeof rawValue === 'object') 
-                    ? JSON.parse(JSON.stringify(rawValue)) 
+                    ? structuredClone(rawValue) 
                     : rawValue;
                 
                 const res = Reflect.set(t, p, valueToSet);

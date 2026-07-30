@@ -5,6 +5,7 @@ import { requestDiscordToken, requestDiscordUser } from "../services/discordServ
 import { MessageType, GlobalSocketMessageSchema, APP_CONSTANTS } from "@activity/shared";
 import type { ActivityWebSocket } from "../types";
 import { unloadServerConfig } from './config.js';
+import {clearInterval} from "node:timers";
 
 const cleanupTimeouts = new Map<string, NodeJS.Timeout>();
 const userSessions = new Map<string, Set<ActivityWebSocket>>();
@@ -185,7 +186,7 @@ export const initSocketServer = (server: Server) => {
         });
     });
 
-    setInterval(() => {
+    const pingInterval = setInterval(() => {
         wss.clients.forEach((client) => {
             const ws = client as ActivityWebSocket;
             if (ws.readyState !== 1) return;
@@ -194,6 +195,10 @@ export const initSocketServer = (server: Server) => {
             ws.ping();
         });
     }, APP_CONSTANTS.WS_PING_INTERVAL);
+
+    wss.on('close', () => {
+        clearInterval(pingInterval);
+    });
 
     return wss;
 };

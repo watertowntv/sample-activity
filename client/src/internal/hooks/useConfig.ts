@@ -19,7 +19,7 @@ const merge = (t: Record<string, unknown>, s: Record<string, unknown>) => {
 };
 
 const getInitial = (): ClientConfig => {
-    const base = JSON.parse(JSON.stringify(INITIAL_CONFIG));
+    const base = structuredClone(INITIAL_CONFIG);
 
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -34,9 +34,11 @@ const getInitial = (): ClientConfig => {
 export const useConfig = create<ClientConfig & { patch: (config: Partial<ClientConfig>) => void }>((set) => ({
     ...getInitial(),
     patch: (config) => set((state) => {
-        const next = JSON.parse(JSON.stringify(state));
+        const { patch, ...data } = state;
+        const next = structuredClone(data) as ClientConfig;
+        const merged = merge(next as Record<string, unknown>, config as Record<string, unknown>) as ClientConfig;
         
-        return merge(next, config as Record<string, unknown>) as ClientConfig & { patch: (config: Partial<ClientConfig>) => void };
+        return { ...merged, patch };
     })
 }));
 

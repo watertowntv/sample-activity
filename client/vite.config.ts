@@ -5,24 +5,7 @@ import tailwindcss from "@tailwindcss/vite"
 export default defineConfig({
     plugins: [
         react(),
-        tailwindcss(),
-        {
-            name: 'discord-guard',
-            configureServer(server) {
-                server.middlewares.use((req, res, next) => {
-                    const ua = req.headers['user-agent'] || '';
-                    const isProxy = req.headers['x-forwarded-for'] || req.headers['cf-connecting-ip'];
-
-                    if (isProxy && !ua.includes('Discord')) {
-                        res.statusCode = 403;
-
-                        return res.end('Forbidden');
-                    }
-
-                    next();
-                });
-            }
-        }
+        tailwindcss()
     ],
     server: {
         hmr: false,

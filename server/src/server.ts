@@ -16,13 +16,6 @@ const httpServer = createServer(app);
 
 app.set('trust proxy', 1);
 
-app.use((req, res, next) => {
-    const ua = req.headers['user-agent'] || '';
-    const isProxy = req.headers['x-forwarded-for'] || req.headers['cf-connecting-ip'];
-    if (isProxy && !ua.includes('Discord')) return res.status(403).send('Forbidden');
-    next();
-});
-
 app.use(express.json());
 app.use(helmet({
     contentSecurityPolicy: {
@@ -36,9 +29,9 @@ app.use(helmet({
 
 import { APP_CONSTANTS } from '@activity/shared';
 
-initSocketServer(httpServer);
+const wss = initSocketServer(httpServer);
 
-const PORT = APP_CONSTANTS.SERVER_PORT;
+const PORT = process.env.PORT ? Number(process.env.PORT) : APP_CONSTANTS.SERVER_PORT;
 httpServer.listen(PORT, () => {
     console.log(`[Pure WS] Server running on http://localhost:${PORT}`);
 });
@@ -46,6 +39,7 @@ httpServer.listen(PORT, () => {
 ['SIGINT', 'SIGTERM'].forEach(signal => {
     process.on(signal, async () => {
         console.log(`Server shutting down (${signal})...`);
+        wss.close();
         await flushAllConfigs();
         process.exit(0);
     });

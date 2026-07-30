@@ -77,7 +77,13 @@ export const DiscordProvider = ({ children }: { children: React.ReactNode }) => 
                 authResetRef.current = null;
             }, APP_CONSTANTS.AUTH_GRACE_PERIOD);
 
-            return;
+            return () => {
+                if (authResetRef.current) {
+                    clearTimeout(authResetRef.current);
+
+                    authResetRef.current = null;
+                }
+            };
         }
         
         if (authResetRef.current) {

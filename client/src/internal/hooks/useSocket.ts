@@ -46,7 +46,8 @@ export const useSocket = <T>(url: string, onMessage?: (data: T, send: (data: T) 
             
             const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 10000);
             reconnectTimeoutRef.current = setTimeout(() => {
-                reconnectAttemptsRef.current++;
+                reconnectAttemptsRef.current = Math.min(reconnectAttemptsRef.current + 1, 10);
+
                 connectRef.current();
             }, delay);
         };
